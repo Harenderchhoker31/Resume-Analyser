@@ -1,7 +1,7 @@
 const userModel=require("../models/user.model.js")
 const bcrypt=require("bcrypt")
 const jwt = require("jsonwebtoken")
-const tokenblacklistModel=require('../models/blacklist.model')
+const tokenblacklistModel=require('../models/blacklist.model.js')
 
 async function registerUserController(req,res) {
     

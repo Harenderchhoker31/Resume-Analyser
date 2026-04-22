@@ -1,6 +1,7 @@
 const userModel=require("../models/user.model.js")
 const bcrypt=require("bcrypt")
 const jwt = require("jsonwebtoken")
+const tokenblacklistModel=require('../models/blacklist.model')
 
 async function registerUserController(req,res) {
     
@@ -65,4 +66,15 @@ async function loginUserController(req,res){
         },
     })
 }
-module.exports={registerUserController,loginUserController}
+
+async function logoutUserController(req,res){
+    const token=req.cookies.token
+
+    if(token){
+        await tokenblacklistModel.create({token})
+    }
+    res.clearCookie('token')
+    res.status(200).json({message:"user logged out successfully"})
+}
+
+module.exports={registerUserController,loginUserController,logoutUserController}

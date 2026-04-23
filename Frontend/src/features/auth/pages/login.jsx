@@ -1,7 +1,7 @@
 import React,{useState} from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import "../form.scss"
-import { useAuth } from '../hooks/useAuth'
+import { useAuth } from '../hooks/useAuth'  
 
 const Login = () => {
 
@@ -16,11 +16,6 @@ const Login = () => {
         await handleLogin({email,password})
         navigate('/')
     }
-
-    if(loading){
-        return (<main><h1>Loading.......</h1></main>)
-    }
-
 
     return (
         <main>
@@ -39,7 +34,7 @@ const Login = () => {
                             onChange={(e) => { setPassword(e.target.value) }}
                             type="password" id="password" name='password' placeholder='Enter password' />
                     </div>
-                    <button className='button primary-button' >Login</button>
+                    <button className='button primary-button' disabled={loading}>{loading ? 'Loading...' : 'Login'}</button>
                 </form>
                 <p>Don't have an account? <Link to={"/register"} >Register</Link> </p>
             </div>

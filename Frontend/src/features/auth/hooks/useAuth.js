@@ -11,11 +11,12 @@ export const useAuth = () => {
         setLoading(true)
         try {
             const res = await axios.post(`${API_URL}/login`, { email, password }, { withCredentials: true })
+            setLoading(false)
             return res.data
         } catch (err) {
-            setError(err.response?.data?.message || 'Login failed')
-        } finally {
             setLoading(false)
+            setError(err.response?.data?.message || 'Login failed')
+            return null
         }
     }
 

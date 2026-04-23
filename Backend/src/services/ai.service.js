@@ -29,7 +29,7 @@ const interviewReportSchema = z.object({
         tasks: z.array(z.string()).describe("List of tasks to be done on this day to follow the preparation plan, e.g. read a specific book or article, solve a set of problems, watch a video etc.")
     })).describe("A day-wise preparation plan for the candidate to follow in order to prepare for the interview effectively"),
     title: z.string().describe("The title of the job for which the interview report is generated"),
-})//generated using AI
+})//generated using AI with help of zod
 
 
 
@@ -43,17 +43,17 @@ async function generateInterviewReport({ resume, selfDescription, jobDescription
 `
 
     const response = await ai.models.generateContent({
-        model: "gemini-3-flash-preview",
+        model: "gemini-2.5-flash",
         contents: prompt,
         config: {
             responseMimeType: "application/json",
-            responseSchema: zodToJsonSchema(interviewReportSchema),
+            responseJsonSchema: zodToJsonSchema(interviewReportSchema),
         }
     })
 
-    return JSON.parse(response.text)
+    console.log(JSON.parse(response.text))
 
 
 }
 
-module.exports=invokeGeminiai 
+module.exports=generateInterviewReport 

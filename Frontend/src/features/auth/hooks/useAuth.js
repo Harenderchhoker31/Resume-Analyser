@@ -1,36 +1,66 @@
-import { useState } from 'react'
-import axios from 'axios'
+import { useContext, useEffect } from "react";
+import { AuthContext } from "../auth.context";
+import { login, register, logout, getMe } from "../services/auth.api";
 
-const API_URL = 'http://localhost:3000/api/auth'
+
 
 export const useAuth = () => {
-    const [loading, setLoading] = useState(false)
-    const [error, setError] = useState(null)
+
+    const context = useContext(AuthContext)
+    const { user, setUser, loading, setLoading } = context
+
 
     const handleLogin = async ({ email, password }) => {
         setLoading(true)
         try {
-            const res = await axios.post(`${API_URL}/login`, { email, password }, { withCredentials: true })
-            setLoading(false)
-            return res.data
+            const data = await login({ email, password })
+            setUser(data.user)
         } catch (err) {
+
+        } finally {
             setLoading(false)
-            setError(err.response?.data?.message || 'Login failed')
-            return null
         }
     }
 
     const handleRegister = async ({ username, email, password }) => {
         setLoading(true)
         try {
-            const res = await axios.post(`${API_URL}/register`, { username, email, password }, { withCredentials: true })
-            return res.data
+            const data = await register({ username, email, password })
+            setUser(data.user)
         } catch (err) {
-            setError(err.response?.data?.message || 'Register failed')
+
         } finally {
             setLoading(false)
         }
     }
 
-    return { loading, error, handleLogin, handleRegister }
+    const handleLogout = async () => {
+        setLoading(true)
+        try {
+            const data = await logout()
+            setUser(null)
+        } catch (err) {
+
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    useEffect(() => {
+
+        const getAndSetUser = async () => {
+            try {
+
+                const data = await getMe()
+                setUser(data.user)
+            } catch (err) { } finally {
+                setLoading(false)
+            }
+        }
+
+        getAndSetUser()
+
+    }, [])
+
+    return { user, loading, handleRegister, handleLogin, handleLogout }
 }

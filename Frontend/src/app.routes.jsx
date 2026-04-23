@@ -4,7 +4,6 @@ import Register from "./features/auth/pages/Register";
 import Protected from "./features/auth/components/Protected";
 
 
-
 export const router = createBrowserRouter([
     {
         path: "/login",

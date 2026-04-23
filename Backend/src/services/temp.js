@@ -105,5 +105,6 @@ I have a strong interest in data-driven applications and artificial intelligence
 As a developer, I believe in continuous growth and practical learning through projects. I enjoy taking ideas from concept to execution, whether it’s building a full stack application or experimenting with new technologies. I am comfortable working in dynamic environments and adapting to challenges as they come. My goal is to create impactful digital experiences while growing as a skilled and reliable developer.
 `
 const jobDescription=`
-
+We are hiring a Full Stack Developer responsible for designing, developing, and maintaining scalable web applications. The candidate should be proficient in frontend technologies like React and backend frameworks such as Node.js and Express. Responsibilities include building RESTful APIs, integrating databases, and ensuring application performance and security. Strong understanding of JavaScript, TypeScript, and MongoDB is required. Experience with Git and agile development practices will be a plus.
 `
+module.exports={resume,selfDescription,jobDescription}

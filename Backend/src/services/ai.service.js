@@ -1,59 +1,55 @@
-const {GoogleGenAI}=require("@google/genai")
-const z= require('zod')
-const { zodToJsonSchema } =require("zod-to-json-schema")
+const OpenAI = require("openai")
 
-
-const ai =new GoogleGenAI({
-    apiKey:process.env.GOOGLE_GENAI_API_KEY
+const ai = new OpenAI({
+    apiKey: process.env.NVIDIA_API_KEY,
+    baseURL: "https://integrate.api.nvidia.com/v1"
 })
- 
-const interviewReportSchema = z.object({
-    matchScore: z.number().describe("A score between 0 and 100 indicating how well the candidate's profile matches the job describe"),
-    technicalQuestions: z.array(z.object({
-        question: z.string().describe("The technical question can be asked in the interview"),
-        intention: z.string().describe("The intention of interviewer behind asking this question"),
-        answer: z.string().describe("How to answer this question, what points to cover, what approach to take etc.")
-    })).describe("Technical questions that can be asked in the interview along with their intention and how to answer them"),
-    behavioralQuestions: z.array(z.object({
-        question: z.string().describe("The technical question can be asked in the interview"),
-        intention: z.string().describe("The intention of interviewer behind asking this question"),
-        answer: z.string().describe("How to answer this question, what points to cover, what approach to take etc.")
-    })).describe("Behavioral questions that can be asked in the interview along with their intention and how to answer them"),
-    skillGaps: z.array(z.object({
-        skill: z.string().describe("The skill which the candidate is lacking"),
-        severity: z.enum([ "low", "medium", "high" ]).describe("The severity of this skill gap, i.e. how important is this skill for the job and how much it can impact the candidate's chances")
-    })).describe("List of skill gaps in the candidate's profile along with their severity"),
-    preparationPlan: z.array(z.object({
-        day: z.number().describe("The day number in the preparation plan, starting from 1"),
-        focus: z.string().describe("The main focus of this day in the preparation plan, e.g. data structures, system design, mock interviews etc."),
-        tasks: z.array(z.string()).describe("List of tasks to be done on this day to follow the preparation plan, e.g. read a specific book or article, solve a set of problems, watch a video etc.")
-    })).describe("A day-wise preparation plan for the candidate to follow in order to prepare for the interview effectively"),
-    title: z.string().describe("The title of the job for which the interview report is generated"),
-})//generated using AI with help of zod
 
 
 
 async function generateInterviewReport({ resume, selfDescription, jobDescription }) {
 
+    const prompt = `You are an expert technical interviewer and career coach. Analyze the candidate's resume, self description, and job description thoroughly, then generate a detailed interview report. Return ONLY a valid JSON object with no extra text.
 
-    const prompt = `Generate an interview report for a candidate with the following details:
-                        Resume: ${resume}
-                        Self Description: ${selfDescription}
-                        Job Description: ${jobDescription}
-`
+Resume: ${resume}
+Self Description: ${selfDescription}
+Job Description: ${jobDescription}
 
-    const response = await ai.models.generateContent({
-        model: "gemini-1.5-flash",
-        contents: prompt,
-        config: {
-            responseMimeType: "application/json",
-            responseSchema: zodToJsonSchema(interviewReportSchema),
-        }
+Requirements:
+- Generate at least 5 technical questions highly relevant to the job and candidate's background
+- Generate at least 5 behavioral questions based on the candidate's experience and job requirements
+- Identify ALL skill gaps between the candidate's profile and job requirements
+- Create a 5-day detailed preparation plan with 4-5 specific tasks per day
+- Each question answer must be detailed (4-6 sentences) covering key points, approach, and examples
+- matchScore should reflect honest assessment of candidate fit
+
+Return JSON in this exact format:
+{
+  "matchScore": <number 0-100>,
+  "title": "<job title>",
+  "technicalQuestions": [
+    {"question": "<detailed question>", "intention": "<why interviewer asks this>", "answer": "<detailed answer with key points and approach>"}
+  ],
+  "behavioralQuestions": [
+    {"question": "<detailed question>", "intention": "<why interviewer asks this>", "answer": "<detailed answer with STAR method guidance>"}
+  ],
+  "skillGaps": [
+    {"skill": "<missing skill>", "severity": "low|medium|high"}
+  ],
+  "preparationPlan": [
+    {"day": 1, "focus": "<topic>", "tasks": ["<specific task 1>", "<specific task 2>", "<specific task 3>", "<specific task 4>"]}
+  ]
+}`
+
+    const response = await ai.chat.completions.create({
+        model: "meta/llama-3.3-70b-instruct",
+        messages: [{ role: "user", content: prompt }],
+        max_tokens: 4096
     })
 
-    return JSON.parse(response.text)
-
-
+    const text = response.choices[0].message.content
+    const json = text.slice(text.indexOf('{'), text.lastIndexOf('}') + 1)
+    return JSON.parse(json)
 }
 
 module.exports=generateInterviewReport 

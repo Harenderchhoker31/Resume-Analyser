@@ -1,0 +1,66 @@
+.loading-screen {
+    width: 100%;
+    min-height: 100vh;
+    background-color: #0d1117;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2rem;
+    font-family: system-ui, -apple-system, sans-serif;
+
+    .loading-spinner {
+        width: 52px;
+        height: 52px;
+        border: 3px solid #2a3348;
+        border-top-color: #ff2d78;
+        border-radius: 50%;
+        animation: spin 0.9s linear infinite;
+    }
+
+    .loading-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #e6edf3;
+        margin: 0;
+    }
+
+    .loading-tip {
+        font-size: 0.85rem;
+        color: #7d8590;
+        margin: 0;
+        max-width: 340px;
+        text-align: center;
+        line-height: 1.6;
+
+        span {
+            color: #ff2d78;
+            font-weight: 600;
+        }
+    }
+
+    .loading-dots {
+        display: flex;
+        gap: 6px;
+
+        span {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #ff2d78;
+            animation: bounce 1.2s infinite ease-in-out;
+
+            &:nth-child(2) { animation-delay: 0.2s; }
+            &:nth-child(3) { animation-delay: 0.4s; }
+        }
+    }
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes bounce {
+    0%, 80%, 100% { transform: scale(0.6); opacity: 0.4; }
+    40% { transform: scale(1); opacity: 1; }
+}

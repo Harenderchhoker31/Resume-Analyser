@@ -59,7 +59,7 @@ const RoadMapDay = ({ day }) => (
 // ── Main Component ────────────────────────────────────────────────────────────
 const Interview = () => {
     const [ activeNav, setActiveNav ] = useState('technical')
-    const { report, getReportById, loading, getResumePdf } = useInterview()
+    const { report, getReportById, loading, getResumePdf, resumeLoading } = useInterview()
     const { interviewId } = useParams()
     const navigate = useNavigate()
 
@@ -74,7 +74,10 @@ const Interview = () => {
     if (loading || !report) {
         return (
             <main className='loading-screen'>
-                <h1>Loading your interview plan...</h1>
+                <div className='loading-spinner' />
+                <h1 className='loading-title'>Loading your interview plan...</h1>
+                <p className='loading-tip'>Hang tight! Preparing your <span>personalized questions</span> and preparation roadmap.</p>
+                <div className='loading-dots'><span/><span/><span/></div>
             </main>
         )
     }

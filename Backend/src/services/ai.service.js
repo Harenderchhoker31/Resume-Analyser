@@ -67,24 +67,24 @@ Return JSON in this exact format:
 }
 
 async function generateResumePdf({ resume, selfDescription, jobDescription }) {
-    const prompt = `You are a professional resume writer. Extract information from the resume and self description below, then return ONLY a valid JSON object with no extra text, no newlines inside string values.
+    const prompt = `Extract information from the resume below and return ONLY a valid JSON object with no extra text and no newlines inside string values.
 
-Resume Content: ${resume}
+Resume: ${resume}
 Self Description: ${selfDescription}
 Job Description: ${jobDescription}
 
-Return this exact JSON structure (all values must be single-line strings, no line breaks inside values):
+Return this exact JSON (single-line strings only, no line breaks):
 {
   "name": "full name",
-  "email": "email",
   "phone": "phone",
-  "linkedin": "full linkedin url or empty string",
-  "github": "full github url or empty string",
-  "summary": "2-3 sentence professional summary tailored to job",
-  "skills": ["skill1", "skill2", "skill3"],
-  "projects": [{"name": "project name", "tech": "tech stack", "description": "one line description", "link": "url or empty"}],
-  "education": [{"degree": "degree name", "institution": "institution", "year": "year range", "grade": "grade"}],
-  "activities": ["activity1", "activity2"]
+  "email": "email",
+  "summary": "3-4 sentence professional summary tailored to the job, highlighting strengths and relevant skills",
+  "languages": ["language1", "language2"],
+  "skills": ["skill1", "skill2"],
+  "projects": [{"name": "name", "tech": "tech stack", "description": "2-3 line description of what it does and key features"}],
+  "experience": [{"role": "role", "company": "company", "duration": "duration", "description": "what you did"}],
+  "education": [{"degree": "degree", "institution": "institution", "year": "year range", "grade": "grade"}],
+  "activities": ["detailed activity description"]
 }`
 
     const response = await ai.chat.completions.create({
@@ -95,56 +95,61 @@ Return this exact JSON structure (all values must be single-line strings, no lin
 
     const text = response.choices[0].message.content
     const json = text.slice(text.indexOf('{'), text.lastIndexOf('}') + 1)
-    const data = JSON.parse(json) 
+    const data = JSON.parse(json)
 
     const html = `<!DOCTYPE html>
 <html>
-<head>
-<meta charset="utf-8">
+<head><meta charset="utf-8">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { font-family: Arial, sans-serif; font-size: 11px; color: #222; background: #fff; }
-  .header { background: #1a2332; color: white; padding: 24px 30px; }
-  .header h1 { font-size: 26px; font-weight: 700; letter-spacing: 1px; margin-bottom: 8px; }
-  .contact { display: flex; gap: 16px; flex-wrap: wrap; font-size: 10.5px; }
-  .contact a { color: #a8c4e0; text-decoration: none; }
-  .body { padding: 20px 30px; }
-  .section { margin-bottom: 16px; }
-  .section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: #1a2332; border-left: 3px solid #1a2332; padding-left: 8px; margin-bottom: 10px; }
-  .summary { color: #444; line-height: 1.6; }
-  .skills { display: flex; flex-wrap: wrap; gap: 6px; }
-  .skill { background: #f0f4f8; border: 1px solid #d0dce8; padding: 3px 10px; border-radius: 3px; font-size: 10px; color: #1a2332; }
+  body { font-family: 'Arial', sans-serif; font-size: 11px; color: #222; background: #fff; }
+  .header { text-align: center; padding: 28px 40px 18px; border-bottom: 2px solid #1a2332; }
+  .header h1 { font-size: 28px; font-weight: 800; color: #1a2332; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+  .header .contact { font-size: 10.5px; color: #444; margin-top: 4px; }
+  .header .contact span { margin: 0 8px; }
+  .body { padding: 18px 40px; }
+  .section { margin-bottom: 14px; }
+  .section-title { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; color: #1a2332; border-bottom: 1.5px solid #1a2332; padding-bottom: 3px; margin-bottom: 8px; }
+  .summary { color: #333; line-height: 1.7; font-size: 11px; }
+  .skills-grid { display: flex; flex-wrap: wrap; gap: 5px; }
+  .skill { background: #eef2f7; border: 1px solid #c8d6e8; padding: 2px 9px; border-radius: 2px; font-size: 10px; color: #1a2332; font-weight: 500; }
   .project { margin-bottom: 10px; }
-  .project-header { display: flex; justify-content: space-between; align-items: center; }
-  .project-name { font-weight: 700; color: #1a2332; font-size: 11.5px; }
-  .project-tech { color: #666; font-size: 10px; font-style: italic; }
-  .project-desc { color: #444; margin-top: 3px; line-height: 1.5; }
-  .project-link a { color: #1a2332; font-size: 10px; }
-  .edu-item { margin-bottom: 8px; }
-  .edu-header { display: flex; justify-content: space-between; }
-  .edu-degree { font-weight: 700; color: #1a2332; }
-  .edu-grade { color: #666; }
-  .edu-inst { color: #444; }
-  .activity { color: #444; margin-bottom: 4px; padding-left: 12px; position: relative; }
-  .activity::before { content: '•'; position: absolute; left: 0; color: #1a2332; }
+  .project-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 2px; }
+  .project-name { font-weight: 700; font-size: 11.5px; color: #1a2332; }
+  .project-tech { font-size: 9.5px; color: #666; font-style: italic; }
+  .project-desc { color: #444; line-height: 1.6; font-size: 10.5px; }
+  .exp-item { margin-bottom: 10px; }
+  .exp-top { display: flex; justify-content: space-between; }
+  .exp-role { font-weight: 700; color: #1a2332; font-size: 11.5px; }
+  .exp-duration { color: #666; font-size: 10px; }
+  .exp-company { color: #555; font-size: 10.5px; margin-bottom: 2px; }
+  .exp-desc { color: #444; line-height: 1.6; font-size: 10.5px; }
+  .edu-item { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+  .edu-left .edu-degree { font-weight: 700; color: #1a2332; font-size: 11px; }
+  .edu-left .edu-inst { color: #555; font-size: 10.5px; }
+  .edu-right { text-align: right; }
+  .edu-year { color: #666; font-size: 10px; }
+  .edu-grade { color: #1a2332; font-weight: 600; font-size: 10px; }
+  .activity { color: #444; line-height: 1.6; font-size: 10.5px; padding-left: 12px; position: relative; margin-bottom: 4px; }
+  .activity::before { content: '\u2022'; position: absolute; left: 0; color: #1a2332; font-weight: 700; }
 </style>
 </head>
 <body>
 <div class="header">
   <h1>${data.name}</h1>
   <div class="contact">
-    ${data.email ? `<span><a href="mailto:${data.email}">${data.email}</a></span>` : ''}
     ${data.phone ? `<span>${data.phone}</span>` : ''}
-    ${data.linkedin ? `<span><a href="${data.linkedin}">LinkedIn</a></span>` : ''}
-    ${data.github ? `<span><a href="${data.github}">GitHub</a></span>` : ''}
+    ${data.email ? `<span>${data.email}</span>` : ''}
   </div>
 </div>
 <div class="body">
   ${data.summary ? `<div class="section"><div class="section-title">Professional Summary</div><div class="summary">${data.summary}</div></div>` : ''}
-  ${data.skills?.length ? `<div class="section"><div class="section-title">Skills</div><div class="skills">${data.skills.map(s => `<span class="skill">${s}</span>`).join('')}</div></div>` : ''}
-  ${data.projects?.length ? `<div class="section"><div class="section-title">Projects</div>${data.projects.map(p => `<div class="project"><div class="project-header"><span class="project-name">${p.name}</span><span class="project-tech">${p.tech}</span></div><div class="project-desc">${p.description}</div>${p.link ? `<div class="project-link"><a href="${p.link}">${p.link}</a></div>` : ''}</div>`).join('')}</div>` : ''}
-  ${data.education?.length ? `<div class="section"><div class="section-title">Education</div>${data.education.map(e => `<div class="edu-item"><div class="edu-header"><span class="edu-degree">${e.degree}</span><span class="edu-grade">${e.grade}</span></div><div class="edu-inst">${e.institution} | ${e.year}</div></div>`).join('')}</div>` : ''}
-  ${data.activities?.length ? `<div class="section"><div class="section-title">Extra-Curricular</div>${data.activities.map(a => `<div class="activity">${a}</div>`).join('')}</div>` : ''}
+  ${data.languages?.length ? `<div class="section"><div class="section-title">Programming Languages</div><div class="skills-grid">${data.languages.map(l => `<span class="skill">${l}</span>`).join('')}</div></div>` : ''}
+  ${data.skills?.length ? `<div class="section"><div class="section-title">Skills &amp; Tools</div><div class="skills-grid">${data.skills.map(s => `<span class="skill">${s}</span>`).join('')}</div></div>` : ''}
+  ${data.projects?.length ? `<div class="section"><div class="section-title">Projects</div>${data.projects.map(p => `<div class="project"><div class="project-top"><span class="project-name">${p.name}</span><span class="project-tech">${p.tech}</span></div><div class="project-desc">${p.description}</div></div>`).join('')}</div>` : ''}
+  ${data.experience?.length ? `<div class="section"><div class="section-title">Experience</div>${data.experience.map(e => `<div class="exp-item"><div class="exp-top"><span class="exp-role">${e.role}</span><span class="exp-duration">${e.duration}</span></div><div class="exp-company">${e.company}</div><div class="exp-desc">${e.description}</div></div>`).join('')}</div>` : ''}
+  ${data.education?.length ? `<div class="section"><div class="section-title">Education</div>${data.education.map(e => `<div class="edu-item"><div class="edu-left"><div class="edu-degree">${e.degree}</div><div class="edu-inst">${e.institution}</div></div><div class="edu-right"><div class="edu-year">${e.year}</div><div class="edu-grade">${e.grade}</div></div></div>`).join('')}</div>` : ''}
+  ${data.activities?.length ? `<div class="section"><div class="section-title">Co-Curricular Activities</div>${data.activities.map(a => `<div class="activity">${a}</div>`).join('')}</div>` : ''}
 </div>
 </body>
 </html>`

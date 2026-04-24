@@ -23,7 +23,10 @@ const Home = () => {
     if (loading) {
         return (
             <main className='loading-screen'>
-                <h1>Loading your interview plan...</h1>
+                <div className='loading-spinner' />
+                <h1 className='loading-title'>Generating your interview plan...</h1>
+                <p className='loading-tip'>Our AI is analyzing your resume and the job description. <span>This takes ~30 seconds.</span></p>
+                <div className='loading-dots'><span/><span/><span/></div>
             </main>
         )
     }

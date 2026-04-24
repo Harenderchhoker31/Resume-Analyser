@@ -20,7 +20,7 @@ Requirements:
 - Generate at least 5 behavioral questions based on the candidate's experience and job requirements
 - Identify ALL skill gaps between the candidate's profile and job requirements
 - Create a 5-day detailed preparation plan with 4-5 specific tasks per day
-- Each question answer must be detailed (4-6 sentences) covering key points, approach, and examples
+- Each question answer must be concise (2-3 sentences) covering the key points and approach
 - matchScore should reflect honest assessment of candidate fit
 
 Return JSON in this exact format:

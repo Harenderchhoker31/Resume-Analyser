@@ -50,4 +50,7 @@
         align-self: stretch;
         gap: 1rem;
     }
-} 
+    .right:has(textarea){
+        height: 100%;
+    }
+}  

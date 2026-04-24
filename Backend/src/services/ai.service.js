@@ -16,12 +16,12 @@ Self Description: ${selfDescription}
 Job Description: ${jobDescription}
 
 Requirements:
-- Generate at least 5 technical questions highly relevant to the job and candidate's background
-- Generate at least 5 behavioral questions based on the candidate's experience and job requirements
+- Generate at least 7 technical questions highly relevant to the job and candidate's background
+- Generate at least 7 behavioral questions based on the candidate's experience and job requirements
 - Identify ALL skill gaps between the candidate's profile and job requirements
-- Create a 5-day detailed preparation plan with 4-5 specific tasks per day
+- Create a 7-day detailed preparation plan with 4-5 specific tasks per day
 - Each question answer must be concise (2-3 sentences) covering the key points and approach
-- matchScore should reflect honest assessment of candidate fit
+- matchScore should reflect honest assessment of candidate fit. 
 
 Return JSON in this exact format:
 {
@@ -52,4 +52,4 @@ Return JSON in this exact format:
     return JSON.parse(json)
 }
 
-module.exports=generateInterviewReport 
+module.exports = { generateInterviewReport }

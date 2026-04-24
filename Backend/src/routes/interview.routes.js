@@ -7,4 +7,8 @@ const interviewRouter = express.Router()
 
 interviewRouter.post('/',authmMiddleware.authUser,upload.single("resume"),interviewController.generateInterviewReportController)
 
+interviewRouter.get("/report/:interviewId", authMiddleware.authUser, interviewController.getInterviewReportByIdController)
+
+
+
 module.exports = interviewRouter 

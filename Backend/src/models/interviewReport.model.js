@@ -1,6 +1,5 @@
 const mongoose=require('mongoose')
-const { string, number } = require('zod')
-
+  
 
 const technicalQuestionSchema=new mongoose.Schema({
     question:{
@@ -34,19 +33,19 @@ const behavioralQuestionSchema=new mongoose.Schema({
 
 const skillGapSchema=new mongoose.Schema({
     skill:{
-        type:string,
+        type:String,
         required:[true,"Skill is required"]
     },
     severity:{
         type:String,
-        enum:["Low","Medium","High"],
+        enum:["low","medium","high"],
         required:[true,"Severity is required"]
     }
 },{_id:false})
 
 const preprationPlanSchema=new mongoose.Schema({
     day:{
-        type:number,
+        type:Number,
         required:[true,"Day is required"]
     },
     focus:{
@@ -63,17 +62,17 @@ const preprationPlanSchema=new mongoose.Schema({
 
 const interviewReportSchema=new mongoose.Schema({
     jobDescription:{
-        type:string,
+        type:String,
         required:[true,"Job description is required"]
     },
     resume:{
         type:String,
     },
     selfDescription:{
-        type:string
+        type:String
     },
     matchScore:{
-        type:number,
+        type:Number,
         min:0,
         max:100
 
@@ -81,7 +80,12 @@ const interviewReportSchema=new mongoose.Schema({
     technicalQuestion:[technicalQuestionSchema],
     behavioralQuestion:[behavioralQuestionSchema],
     skillGap:[skillGapSchema],
-    preprationPlan:[preprationPlanSchema]
+    preprationPlan:[preprationPlanSchema],
+    user:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"users",
+
+    }
 
 },{
     timestamps:true

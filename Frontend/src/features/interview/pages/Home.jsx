@@ -6,21 +6,24 @@ import { useAuth } from '../../auth/hooks/useAuth'
 
 const Home = () => {
 
-    const { loading, generateReport, reports } = useInterview()
+    const { generateReport, reports } = useInterview()
     const { handleLogout } = useAuth()
     const [ jobDescription, setJobDescription ] = useState("")
     const [ selfDescription, setSelfDescription ] = useState("")
+    const [ generating, setGenerating ] = useState(false)
     const resumeInputRef = useRef()
 
     const navigate = useNavigate()
 
     const handleGenerateReport = async () => {
         const resumeFile = resumeInputRef.current.files[ 0 ]
+        setGenerating(true)
         const data = await generateReport({ jobDescription, selfDescription, resumeFile })
+        setGenerating(false)
         navigate(`/interview/${data._id}`)
     }
 
-    if (loading) {
+    if (generating) {
         return (
             <main className='loading-screen'>
                 <div className='loading-spinner' />

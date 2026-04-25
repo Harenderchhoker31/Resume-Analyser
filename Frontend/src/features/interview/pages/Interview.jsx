@@ -92,7 +92,7 @@ const Interview = () => {
             {resumeLoading && (
                 <div className='loading-screen' style={{position:'fixed',top:0,left:0,width:'100%',height:'100%',zIndex:100,background:'rgba(13,17,23,0.95)'}}>
                     <div className='loading-spinner' />
-                    <h1 className='loading-title'>Generating your resume...</h1>
+                    <h1 className='loading-title'>Generating AI Resume...</h1>
                     <p className='loading-tip'>Hold on! Our AI is crafting a <span>professional resume</span> tailored to the job description.</p>
                     <div className='loading-dots'><span/><span/><span/></div>
                 </div>

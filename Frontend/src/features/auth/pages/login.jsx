@@ -14,6 +14,15 @@ const Login = () => {
     if (initializing) return (<main><h1>Loading.......</h1></main>)
     if (user) return <Navigate to="/" />
 
+    if (loading) return (
+        <main className='loading-screen'>
+            <div className='loading-spinner' />
+            <h1 className='loading-title'>Logging in...</h1>
+            <p className='loading-tip'>Verifying your credentials, <span>just a moment.</span></p>
+            <div className='loading-dots'><span/><span/><span/></div>
+        </main>
+    )
+
     const handleSubmit = async (e) => {
         e.preventDefault()
         const success = await handleLogin({email,password})

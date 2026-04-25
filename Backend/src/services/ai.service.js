@@ -151,12 +151,10 @@ Return JSON in this exact format:
 }
 
 async function generateResumePdf({ resume, selfDescription, jobDescription }) {
-    const candidateInfo = resume || selfDescription || ""
-    if (!candidateInfo) throw new Error("No resume or self description available to generate PDF")
+    const prompt = `Extract information from the resume below and return ONLY a valid JSON object with no extra text and no newlines inside string values.
 
-    const prompt = `Extract information from the candidate profile below and return ONLY a valid JSON object with no extra text and no newlines inside string values.
-
-Candidate Profile: ${candidateInfo}
+Resume: ${resume}
+Self Description: ${selfDescription || ""}
 Job Description: ${jobDescription}
 
 Return this exact JSON (single-line strings only, no line breaks):

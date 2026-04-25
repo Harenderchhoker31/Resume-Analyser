@@ -14,6 +14,12 @@ const Login = () => {
     if (initializing) return (<main><h1>Loading.......</h1></main>)
     if (user) return <Navigate to="/" />
 
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        const success = await handleLogin({email,password})
+        if(success) navigate('/')
+    }
+
     if (loading) return (
         <main className='loading-screen'>
             <div className='loading-spinner' />
@@ -22,12 +28,6 @@ const Login = () => {
             <div className='loading-dots'><span/><span/><span/></div>
         </main>
     )
-
-    const handleSubmit = async (e) => {
-        e.preventDefault()
-        const success = await handleLogin({email,password})
-        if(success) navigate('/')
-    }
 
 
     return (

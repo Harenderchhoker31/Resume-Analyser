@@ -61,18 +61,19 @@ export const useInterview = () => {
 
     const getResumePdf = async (interviewReportId) => {
         setResumeLoading(true)
-        let response = null
         try {
-            response = await generateResumePdf({ interviewReportId })
-            const url = window.URL.createObjectURL(new Blob([ response ], { type: "application/pdf" }))
+            const response = await generateResumePdf({ interviewReportId })
+            const url = window.URL.createObjectURL(new Blob([response], { type: "application/pdf" }))
             const link = document.createElement("a")
             link.href = url
             link.setAttribute("download", `resume_${interviewReportId}.pdf`)
             document.body.appendChild(link)
             link.click()
-        }
-        catch (error) {
-            console.log(error)
+            link.remove()
+            window.URL.revokeObjectURL(url)
+        } catch (error) {
+            console.error("Resume download failed:", error)
+            alert("Failed to generate resume. Please try again.")
         } finally {
             setResumeLoading(false)
         }
